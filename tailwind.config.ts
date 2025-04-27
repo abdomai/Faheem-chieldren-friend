@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+        // Kids theme colors
+        kidsPink: "#F8C8DC",
+        kidsBlue: "#A7C7E7",
+        kidsGreen: "#C1E1C1",
+        kidsLavender: "#E6E6FA",
+        kidsYellow: "#FDFD96",
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,12 +91,39 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+        'bounce': {
+          '0%, 100%': { 
+            transform: 'translateY(0)' 
+          },
+          '50%': { 
+            transform: 'translateY(-10px)' 
+          }
+        },
+        'sparkle': {
+          '0%': { 
+            opacity: '0',
+            transform: 'scale(0.8) rotate(0deg)'
+          },
+          '50%': { 
+            opacity: '1',
+            transform: 'scale(1.2) rotate(180deg)'
+          },
+          '100%': { 
+            opacity: '0',
+            transform: 'scale(0.8) rotate(360deg)'
+          }
+        }
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				'accordion-up': 'accordion-up 0.2s ease-out',
+        'bounce': 'bounce 0.6s infinite',
+        'sparkle': 'sparkle 1.5s infinite'
+			},
+      fontFamily: {
+        nunito: ['Nunito', 'sans-serif'],
+      }
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
