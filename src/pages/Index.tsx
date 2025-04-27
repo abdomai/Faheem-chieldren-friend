@@ -10,25 +10,25 @@ import { Pencil, Image, MessageCircle } from 'lucide-react';
 const Index: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("draw");
   
-  // Update mascot message based on active tab
+  // Update mascot message based on active tab in Arabic
   const getMascotMessage = () => {
     switch (activeTab) {
       case "draw":
-        return "Let's draw something awesome! Use the magic wand for sparkles!";
+        return "!دعنا نرسم شيئًا رائعًا! استخدم العصا السحرية للحصول على لمعان";
       case "upload":
-        return "Show me your pictures! I'd love to see what you've got!";
+        return "!أرني صورك! أود أن أرى ما لديك";
       case "chat":
-        return "Have any questions? I'm here to chat with you!";
+        return "!هل لديك أي أسئلة؟ أنا هنا للدردشة معك";
       default:
-        return "Let's create something awesome!";
+        return "!دعنا نبتكر شيئًا رائعًا";
     }
   };
   
   return (
-    <div className="container px-4 py-8 mx-auto">
+    <div dir="rtl" className="container px-4 py-8 mx-auto">
       <header className="flex flex-col md:flex-row items-center justify-between mb-10">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 md:mb-0 text-center md:text-left bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 text-transparent bg-clip-text">
-          Kids' Creative Fun
+        <h1 className="text-4xl md:text-5xl font-bold mb-6 md:mb-0 text-center md:text-right bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 text-transparent bg-clip-text">
+          المرح الإبداعي للأطفال
         </h1>
         
         <div className="w-32">
@@ -49,7 +49,7 @@ const Index: React.FC = () => {
           >
             <div className="flex flex-col items-center gap-1">
               <Pencil size={24} />
-              <span>Draw</span>
+              <span>الرسم</span>
             </div>
           </TabsTrigger>
           
@@ -59,7 +59,7 @@ const Index: React.FC = () => {
           >
             <div className="flex flex-col items-center gap-1">
               <Image size={24} />
-              <span>Pictures</span>
+              <span>الصور</span>
             </div>
           </TabsTrigger>
           
@@ -69,7 +69,7 @@ const Index: React.FC = () => {
           >
             <div className="flex flex-col items-center gap-1">
               <MessageCircle size={24} />
-              <span>Chat</span>
+              <span>الدردشة</span>
             </div>
           </TabsTrigger>
         </TabsList>
@@ -90,8 +90,8 @@ const Index: React.FC = () => {
       </Tabs>
       
       <footer className="text-center mt-8 text-gray-700 text-sm">
-        <p>Created with ❤️ for kids everywhere!</p>
-        <p className="mt-1">All doodles and creativity are awesome!</p>
+        <p>!تم إنشاؤه بكل ❤️ للأطفال في كل مكان</p>
+        <p className="mt-1">!كل الخربشات والإبداعات رائعة</p>
       </footer>
     </div>
   );

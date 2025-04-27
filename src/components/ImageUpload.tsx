@@ -76,8 +76,8 @@ const ImageUpload: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full max-w-2xl mx-auto bg-white/30 p-4 rounded-3xl backdrop-blur-sm shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-blue-900">Upload Your Picture</h2>
+    <div dir="rtl" className="flex flex-col items-center w-full max-w-2xl mx-auto bg-white/30 p-4 rounded-3xl backdrop-blur-sm shadow-lg">
+      <h2 className="text-2xl font-bold mb-4 text-blue-900">رفع الصور</h2>
       
       {!image ? (
         <div 
@@ -93,10 +93,10 @@ const ImageUpload: React.FC = () => {
             </div>
             
             <p className="text-center font-medium">
-              Drop your photos here!
+              !ضع صورك هنا
             </p>
             <p className="text-center text-sm text-gray-500 mt-2">
-              or click to browse
+              أو انقر لاختيار الملفات
             </p>
           </div>
           
@@ -112,7 +112,7 @@ const ImageUpload: React.FC = () => {
         <div className="relative w-full">
           <img 
             src={image} 
-            alt="Uploaded" 
+            alt="الصورة المرفوعة" 
             className="max-w-full max-h-[400px] object-contain mx-auto rounded-xl shadow-md"
           />
           
@@ -121,15 +121,15 @@ const ImageUpload: React.FC = () => {
               onClick={clearImage}
               className="bg-kidsLavender hover:bg-kidsLavender/80 text-black"
             >
-              Upload New Photo
+              رفع صورة جديدة
             </Button>
             
             <Button 
               onClick={analyzeImage}
               className="bg-kidsPink hover:bg-kidsPink/80 text-black flex items-center gap-2"
             >
+              ما محتوى هذه الصورة؟
               <CheckCircle size={18} />
-              What's in this picture?
             </Button>
           </div>
         </div>

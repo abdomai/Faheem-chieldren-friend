@@ -177,8 +177,8 @@ const DrawingCanvas: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full max-w-2xl mx-auto bg-white/30 p-4 rounded-3xl backdrop-blur-sm shadow-lg">
-      <h2 className="text-2xl font-bold mb-3 text-purple-900">Drawing Canvas</h2>
+    <div dir="rtl" className="flex flex-col items-center w-full max-w-2xl mx-auto bg-white/30 p-4 rounded-3xl backdrop-blur-sm shadow-lg">
+      <h2 className="text-2xl font-bold mb-3 text-purple-900">لوحة الرسم</h2>
       
       {/* Color picker */}
       <ColorPicker selectedColor={color} onSelectColor={setColor} />
@@ -186,17 +186,17 @@ const DrawingCanvas: React.FC = () => {
       {/* Brush size selector */}
       <div className="w-full flex justify-center gap-3 mb-4">
         <div className="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-xl">
-          <span className="text-sm font-medium">Brush Size:</span>
           <div className="flex gap-2">
             {[8, 12, 20, 30].map((size) => (
               <button
                 key={size}
                 className={`w-${size / 4} h-${size / 4} rounded-full bg-black transition-all ${brushSize === size ? 'ring-2 ring-kidsYellow scale-110' : ''}`}
                 onClick={() => setBrushSize(size)}
-                title={`Brush size ${size}px`}
+                title={`حجم الفرشاة ${size}بكسل`}
               />
             ))}
           </div>
+          <span className="text-sm font-medium">:حجم الفرشاة</span>
         </div>
       </div>
       
@@ -223,31 +223,31 @@ const DrawingCanvas: React.FC = () => {
           onClick={clearCanvas}
           className="bg-kidsLavender hover:bg-kidsLavender/80 text-black"
         >
-          Clear Canvas
+          مسح اللوحة
         </Button>
         
         <Button 
           onClick={toggleSparkleMode}
           className={`${sparkleMode ? 'bg-kidsYellow' : 'bg-kidsBlue'} hover:bg-kidsYellow/80 text-black flex items-center gap-2`}
         >
+          {sparkleMode ? 'إيقاف السحر' : 'العصا السحرية'}
           <Wand2 size={18} />
-          {sparkleMode ? 'Disable Magic' : 'Magic Wand'}
         </Button>
         
         <Button 
           onClick={downloadDrawing}
           className="bg-kidsGreen hover:bg-kidsGreen/80 text-black flex items-center gap-2"
         >
+          حفظ الرسمة
           <Download size={18} />
-          Save Drawing
         </Button>
         
         <Button 
           onClick={analyzeDrawing}
           className="bg-kidsPink hover:bg-kidsPink/80 text-black flex items-center gap-2"
         >
+          أخبرني عن رسمتي
           <CheckCircle size={18} />
-          Tell Me About My Art
         </Button>
       </div>
     </div>
