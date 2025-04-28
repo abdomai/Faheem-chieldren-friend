@@ -22,7 +22,7 @@
 1. **استنساخ المشروع**
    ```bash
    git clone https://github.com/your-username/doodle-sparkle-chat-fun.git
-   cd doodle-sparkle-chat-fun
+   cd Faheem-chieldren-friend
    ```
 
 2. **تثبيت التبعيات**
