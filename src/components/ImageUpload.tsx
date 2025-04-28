@@ -1,12 +1,13 @@
-
 import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Upload, Image, CheckCircle } from 'lucide-react';
+import { Upload, Image, CheckCircle, Loader2 } from 'lucide-react';
+import { analyzeImage } from '@/services/openai';
 
 const ImageUpload: React.FC = () => {
   const [image, setImage] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -37,14 +38,14 @@ const ImageUpload: React.FC = () => {
 
   const handleFile = (file: File) => {
     if (!file.type.match('image.*')) {
-      toast.error("Please select an image file", {
+      toast.error("يرجى اختيار ملف صورة", {
         icon: "❌",
       });
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      toast.error("Image is too large! Please select an image under 5MB", {
+    if (file.size > 1 * 1024 * 1024) { // 1MB limit
+      toast.error("الصورة كبيرة جدًا! يرجى اختيار صورة أقل من 1 ميجابايت", {
         icon: "❌",
       });
       return;
@@ -54,7 +55,7 @@ const ImageUpload: React.FC = () => {
     reader.onload = (e) => {
       if (e.target && typeof e.target.result === 'string') {
         setImage(e.target.result);
-        toast("Image uploaded successfully!", {
+        toast("تم رفع الصورة بنجاح!", {
           icon: "🌟",
         });
       }
@@ -69,15 +70,30 @@ const ImageUpload: React.FC = () => {
     }
   };
 
-  const analyzeImage = () => {
-    toast("I see something amazing in your picture!", {
-      icon: "🤖",
-    });
+  const handleAnalyzeImage = async () => {
+    if (!image) return;
+    
+    setIsAnalyzing(true);
+    try {
+      const analysis = await analyzeImage(image);
+      toast(analysis || "أرى شيئًا رائعًا في صورتك!", {
+        icon: "🤖",
+        duration: 10000, // Increased duration for longer analysis
+      });
+    } catch (error) {
+      console.error('Analysis error:', error);
+      toast.error("عذرًا، حدث خطأ أثناء تحليل الصورة. يرجى المحاولة مرة أخرى.", {
+        icon: "❌",
+        duration: 5000,
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return (
     <div className="flex flex-col items-center w-full max-w-2xl mx-auto bg-white/30 p-4 rounded-3xl backdrop-blur-sm shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-blue-900">Upload Your Picture</h2>
+      <h2 className="text-2xl font-bold mb-4 text-blue-900">ارفع صورتك</h2>
       
       {!image ? (
         <div 
@@ -93,10 +109,10 @@ const ImageUpload: React.FC = () => {
             </div>
             
             <p className="text-center font-medium">
-              Drop your photos here!
+              اسحب صورك هنا!
             </p>
             <p className="text-center text-sm text-gray-500 mt-2">
-              or click to browse
+              أو اضغط لتصفح الصور
             </p>
           </div>
           
@@ -121,15 +137,25 @@ const ImageUpload: React.FC = () => {
               onClick={clearImage}
               className="bg-kidsLavender hover:bg-kidsLavender/80 text-black"
             >
-              Upload New Photo
+              ارفع صورة جديدة
             </Button>
             
             <Button 
-              onClick={analyzeImage}
+              onClick={handleAnalyzeImage}
+              disabled={isAnalyzing}
               className="bg-kidsPink hover:bg-kidsPink/80 text-black flex items-center gap-2"
             >
-              <CheckCircle size={18} />
-              What's in this picture?
+              {isAnalyzing ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  جاري التحليل...
+                </>
+              ) : (
+                <>
+                  <CheckCircle size={18} />
+                  ماذا يوجد في هذه الصورة؟
+                </>
+              )}
             </Button>
           </div>
         </div>

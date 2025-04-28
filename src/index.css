@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap');
 
 @tailwind base;
@@ -45,7 +44,9 @@
   }
 
   body {
-    @apply bg-gradient-to-br from-kidsLavender via-kidsPink to-kidsBlue min-h-screen text-foreground;
+    background-color: #f3d5d5;
+    min-height: 100vh;
+    color: var(--foreground);
   }
   
   button, .btn {

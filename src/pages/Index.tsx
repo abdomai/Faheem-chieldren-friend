@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DrawingCanvas from '@/components/DrawingCanvas';
@@ -14,26 +13,26 @@ const Index: React.FC = () => {
   const getMascotMessage = () => {
     switch (activeTab) {
       case "draw":
-        return "Let's draw something awesome! Use the magic wand for sparkles!";
+        return "هيا نرسم شيئًا رائعًا! استخدم العصا السحرية للنجوم!";
       case "upload":
-        return "Show me your pictures! I'd love to see what you've got!";
+        return "أرني صورك! أود أن أرى ما لديك!";
       case "chat":
-        return "Have any questions? I'm here to chat with you!";
+        return "هل لديك أي أسئلة؟ أنا هنا للدردشة معك!";
       default:
-        return "Let's create something awesome!";
+        return "هيا نبدع معًا!";
     }
   };
   
   return (
     <div className="container px-4 py-8 mx-auto">
       <header className="flex flex-col md:flex-row items-center justify-between mb-10">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 md:mb-0 text-center md:text-left bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 text-transparent bg-clip-text">
-          Kids' Creative Fun
-        </h1>
-        
-        <div className="w-32">
+        <div className="w-32 order-1 md:order-1">
           <Mascot message={getMascotMessage()} />
         </div>
+        
+        <h1 className="text-4xl md:text-5xl font-bold mb-6 md:mb-0 text-center md:text-right order-2 md:order-2 bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 text-transparent bg-clip-text">
+          فهيـــــم
+        </h1>
       </header>
       
       <Tabs
@@ -49,7 +48,7 @@ const Index: React.FC = () => {
           >
             <div className="flex flex-col items-center gap-1">
               <Pencil size={24} />
-              <span>Draw</span>
+              <span>ارسم</span>
             </div>
           </TabsTrigger>
           
@@ -59,17 +58,17 @@ const Index: React.FC = () => {
           >
             <div className="flex flex-col items-center gap-1">
               <Image size={24} />
-              <span>Pictures</span>
+              <span>صور</span>
             </div>
           </TabsTrigger>
           
           <TabsTrigger
             value="chat"
-            className="data-[state=active]:bg-kidsYellow data-[state=active]:text-black py-6 shadow-lg rounded-xl"
+            className="data-[state=active]:bg-kidsGreen data-[state=active]:text-black py-6 shadow-lg rounded-xl"
           >
             <div className="flex flex-col items-center gap-1">
               <MessageCircle size={24} />
-              <span>Chat</span>
+              <span>دردشة</span>
             </div>
           </TabsTrigger>
         </TabsList>
@@ -90,8 +89,8 @@ const Index: React.FC = () => {
       </Tabs>
       
       <footer className="text-center mt-8 text-gray-700 text-sm">
-        <p>Created with ❤️ for kids everywhere!</p>
-        <p className="mt-1">All doodles and creativity are awesome!</p>
+        <p>صُنع بحب للأطفال في كل مكان!</p>
+        <p className="mt-1">كل الرسومات والإبداعات رائعة!</p>
       </footer>
     </div>
   );
