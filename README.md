@@ -21,7 +21,7 @@
 
 1. **استنساخ المشروع**
    ```bash
-   git clone https://github.com/your-username/doodle-sparkle-chat-fun.git
+   git clone https://github.com/abdomai/Faheem-chieldren-friend.git
    cd Faheem-chieldren-friend
    ```
 
