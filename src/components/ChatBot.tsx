@@ -1,8 +1,9 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, Send } from 'lucide-react';
+import { MessageCircle, Send, Loader2 } from 'lucide-react';
+import { chatWithAI } from '@/services/openai';
+import { toast } from "sonner";
 
 type Message = {
   text: string;
@@ -11,41 +12,42 @@ type Message = {
 };
 
 const botResponses = [
-  "That's a great question! Dinosaurs lived millions of years ago and some had feathers!",
-  "I love drawing too! Did you know some of the earliest paintings were made by people who lived in caves?",
-  "Space is super cool! There are billions of stars in our galaxy!",
-  "Hmm, I think a unicorn is a magical horse with a horn on its head!",
-  "Butterflies start as caterpillars before they grow their beautiful wings!",
-  "The ocean is very deep! Some fish live so deep that they make their own light!",
-  "My favorite animal is a bear! What's yours?",
-  "Did you know that trees can talk to each other through their roots?",
-  "Knock knock! Who's there? Interrupting cow! Interrupting cow w-MOOOOO!",
-  "If you mix red and blue paint, you'll get purple!",
-  "The moon looks different each night because we see different parts of it lit by the sun!",
+  "سؤال رائع! عاشت الديناصورات منذ ملايين السنين وكان لبعضها ريش!",
+  "أنا أحب الرسم أيضًا! هل تعلم أن بعض أقدم اللوحات رسمها أناس عاشوا في الكهوف؟",
+  "الفضاء مذهل! هناك مليارات النجوم في مجرتنا!",
+  "أعتقد أن وحيد القرن هو حصان سحري له قرن على رأسه!",
+  "تبدأ الفراشات كيرقات قبل أن تنمو أجنحتها الجميلة!",
+  "المحيط عميق جدًا! بعض الأسماك تعيش في أعماق بحيث تصنع ضوءها بنفسها!",
+  "حيواني المفضل هو الدب! ما هو حيوانك المفضل؟",
+  "هل تعلم أن الأشجار يمكنها التواصل مع بعضها البعض عبر الجذور؟",
+  "نكتة: من يطرق الباب؟ بقرة مقاطعة! بقرة مقاطعة مـ... مووو!",
+  "إذا مزجت اللون الأحمر مع الأزرق ستحصل على اللون البنفسجي!",
+  "يبدو القمر مختلفًا كل ليلة لأننا نرى أجزاء مختلفة منه مضاءة بالشمس!",
 ];
 
 const chatStarters = [
-  "Tell me about dinosaurs!",
-  "I like drawing!",
-  "What's in space?", 
-  "What's a unicorn?",
-  "How do butterflies grow?",
-  "Tell me about the ocean!",
-  "What's your favorite animal?",
-  "Tell me a fun fact!",
-  "Tell me a joke!",
+  "أخبرني عن الديناصورات!",
+  "أحب الرسم!",
+  "ماذا يوجد في الفضاء؟",
+  "ما هو وحيد القرن؟",
+  "كيف تنمو الفراشات؟",
+  "أخبرني عن المحيط!",
+  "ما هو حيوانك المفضل؟",
+  "أخبرني حقيقة ممتعة!",
+  "أخبرني نكتة!",
 ];
 
 const ChatBot: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
-      text: "Hi there! I'm your robot friend! What would you like to talk about today?",
+      text: "مرحبًا! أنا صديقك الروبوت! عن ماذا تريد أن نتحدث اليوم؟",
       isUser: false,
       timestamp: new Date(),
     },
   ]);
   
   const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
@@ -56,7 +58,7 @@ const ChatBot: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
   
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!input.trim()) return;
     
     // Add user message
@@ -68,22 +70,31 @@ const ChatBot: React.FC = () => {
     
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
+    setIsLoading(true);
     
-    // Simulate "typing" with a short delay
-    setTimeout(() => {
-      // Generate a random response
+    try {
+      const response = await chatWithAI(input);
+      
       const botMessage = {
-        text: botResponses[Math.floor(Math.random() * botResponses.length)],
+        text: response,
         isUser: false,
         timestamp: new Date(),
       };
       
       setMessages((prev) => [...prev, botMessage]);
-    }, 1000);
+    } catch (error) {
+      console.error('Chat error:', error);
+      toast.error("عذرًا، حدث خطأ أثناء المحادثة. يرجى المحاولة مرة أخرى.", {
+        icon: "❌",
+        duration: 5000,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !isLoading) {
       handleSendMessage();
     }
   };
@@ -93,12 +104,12 @@ const ChatBot: React.FC = () => {
   };
   
   return (
-    <div className="flex flex-col w-full max-w-2xl mx-auto bg-white/30 p-4 rounded-3xl backdrop-blur-sm shadow-lg">
+    <div className="flex flex-col w-full max-w-3xl mx-auto bg-blue-100 p-4 rounded-3xl backdrop-blur-sm shadow-lg">
       <div className="flex items-center gap-3 mb-4">
         <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
           <MessageCircle size={24} className="text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-blue-900">Chat with Robot</h2>
+        <h2 className="text-2xl font-bold text-blue-900">دردش مع الروبوت</h2>
       </div>
       
       {/* Chat suggestions */}
@@ -106,7 +117,7 @@ const ChatBot: React.FC = () => {
         {chatStarters.slice(0, 4).map((starter, index) => (
           <button
             key={index}
-            className="bg-kidsLavender/70 hover:bg-kidsLavender px-3 py-1 rounded-full text-sm font-medium transition-colors"
+            className="bg-kidsLavender/70 hover:bg-kidsLavender px-3 py-1 rounded-full text-lg font-medium transition-colors"
             onClick={() => useStarter(starter)}
           >
             {starter}
@@ -122,10 +133,10 @@ const ChatBot: React.FC = () => {
             className={`flex mb-3 ${message.isUser ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-[80%] p-3 rounded-xl ${
+              className={`max-w-[80%] p-3 rounded-xl text-lg ${
                 message.isUser
                   ? 'bg-kidsBlue text-black rounded-tr-none'
-                  : 'bg-kidsYellow text-black rounded-tl-none'
+                  : 'bg-blue-200 text-black rounded-tl-none'
               }`}
             >
               <p>{message.text}</p>
@@ -138,6 +149,13 @@ const ChatBot: React.FC = () => {
             </div>
           </div>
         ))}
+        {isLoading && (
+          <div className="flex justify-start mb-3">
+            <div className="bg-blue-200 text-black rounded-xl p-3 rounded-tl-none">
+              <Loader2 className="h-5 w-5 animate-spin" />
+            </div>
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
       
@@ -147,14 +165,20 @@ const ChatBot: React.FC = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Type your message..."
-          className="bg-white/80 border-kidsBlue focus-visible:ring-kidsBlue"
+          placeholder="اكتب رسالتك..."
+          className="bg-white/80 border-kidsBlue focus-visible:ring-kidsBlue text-lg"
+          disabled={isLoading}
         />
         <Button
           onClick={handleSendMessage}
-          className="bg-kidsBlue hover:bg-kidsBlue/80 text-black"
+          disabled={isLoading}
+          className="bg-kidsBlue hover:bg-kidsBlue/80 text-black text-lg"
         >
-          <Send size={18} />
+          {isLoading ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : (
+            <Send size={18} />
+          )}
         </Button>
       </div>
     </div>

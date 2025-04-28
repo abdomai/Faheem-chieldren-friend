@@ -1,73 +1,119 @@
-# Welcome to your Lovable project
+# فهيم - تطبيق الرسم والتحليل للأطفال
 
-## Project info
+تطبيق تفاعلي للأطفال يتيح لهم الرسم، تحليل الصور، والدردشة مع روبوت ذكي. التطبيق مصمم ليكون سهل الاستخدام وجذاب للأطفال.
 
-**URL**: https://lovable.dev/projects/ff3f07bb-b266-426a-8ddc-28416c80f80d
+## المميزات
 
-## How can I edit this code?
+- 🎨 لوحة رسم تفاعلية مع أدوات متعددة
+- ✨ وضع النجوم السحري للرسم
+- 📸 تحليل الصور باستخدام الذكاء الاصطناعي
+- 💬 دردشة ذكية مع روبوت يتحدث العربية
+- 🎯 واجهة مستخدم صديقة للأطفال
+- 📱 تصميم متجاوب يعمل على جميع الأجهزة
 
-There are several ways of editing your application.
+## متطلبات النظام
 
-**Use Lovable**
+- Node.js (الإصدار 16 أو أحدث)
+- npm أو yarn
+- متصفح حديث (Chrome, Firefox, Safari, Edge)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/ff3f07bb-b266-426a-8ddc-28416c80f80d) and start prompting.
+## إعداد المشروع
 
-Changes made via Lovable will be committed automatically to this repo.
+1. **استنساخ المشروع**
+   ```bash
+   git clone https://github.com/your-username/doodle-sparkle-chat-fun.git
+   cd doodle-sparkle-chat-fun
+   ```
 
-**Use your preferred IDE**
+2. **تثبيت التبعيات**
+   ```bash
+   npm install
+   # أو
+   yarn install
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+3. **إعداد متغيرات البيئة**
+   - أنشئ ملف `.env` في المجلد الرئيسي
+   - أضف مفتاح OpenAI API الخاص بك:
+   ```
+   VITE_OPENAI_API_KEY=your-api-key-here
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## تشغيل المشروع
 
-Follow these steps:
+1. **وضع التطوير**
+   ```bash
+   npm run dev
+   # أو
+   yarn dev
+   ```
+   سيفتح التطبيق في المتصفح على العنوان: `http://localhost:5173`
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. **بناء المشروع للإنتاج**
+   ```bash
+   npm run build
+   # أو
+   yarn build
+   ```
+   سيتم إنشاء مجلد `dist` يحتوي على الملفات المجمعة.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+3. **معاينة الإصدار الإنتاجي**
+   ```bash
+   npm run preview
+   # أو
+   yarn preview
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+## كيفية الاستخدام
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+1. **الرسم**
+   - اختر لون الفرشاة من منتقي الألوان
+   - اضبط حجم الفرشاة حسب الحاجة
+   - استخدم العصا السحرية لرسم النجوم ✨
+   - احفظ رسمتك أو اطلب تحليلها
+
+2. **تحليل الصور**
+   - ارفع صورة من جهازك
+   - اضغط على زر التحليل
+   - استمتع بالتحليل التفاعلي للصورة
+
+3. **الدردشة**
+   - اكتب رسالتك في مربع النص
+   - اختر من اقتراحات المحادثة الجاهزة
+   - استمتع بالدردشة مع الروبوت الذكي
+
+## هيكل المشروع
+
+```
+doodle-sparkle-chat-fun/
+├── src/
+│   ├── components/     # مكونات React
+│   ├── services/       # خدمات API
+│   ├── pages/          # صفحات التطبيق
+│   ├── styles/         # ملفات CSS
+│   └── utils/          # أدوات مساعدة
+├── public/             # ملفات ثابتة
+└── package.json        # تبعيات المشروع
 ```
 
-**Edit a file directly in GitHub**
+## المساهمة
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+نرحب بمساهماتكم! يرجى اتباع الخطوات التالية:
 
-**Use GitHub Codespaces**
+1. Fork المشروع
+2. أنشئ فرعًا جديدًا (`git checkout -b feature/amazing-feature`)
+3. قم بعمل commit للتغييرات (`git commit -m 'Add some amazing feature'`)
+4. ادفع التغييرات (`git push origin feature/amazing-feature`)
+5. افتح طلب Pull Request
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## الترخيص
 
-## What technologies are used for this project?
+هذا المشروع مرخص تحت رخصة MIT - انظر ملف [LICENSE](LICENSE) للتفاصيل.
 
-This project is built with:
+## الدعم
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+إذا واجهتك أي مشكلة أو لديك استفسار، يرجى فتح issue في GitHub.
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/ff3f07bb-b266-426a-8ddc-28416c80f80d) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+تم تطوير هذا المشروع بحب للأطفال في كل مكان! 🎨✨

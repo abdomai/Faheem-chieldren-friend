@@ -1,9 +1,9 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import ColorPicker from './ColorPicker';
-import { Wand2, Download, CheckCircle } from 'lucide-react';
+import { Wand2, Download, CheckCircle, Loader2 } from 'lucide-react';
+import { analyzeDrawing } from '@/services/openai';
 
 const DrawingCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -11,9 +11,10 @@ const DrawingCanvas: React.FC = () => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [color, setColor] = useState('#FF6B6B'); // Start with red
   const [brushSize, setBrushSize] = useState(12);
-  const [canvasWidth, setCanvasWidth] = useState(600);
-  const [canvasHeight, setCanvasHeight] = useState(400);
+  const [canvasWidth, setCanvasWidth] = useState(1200);
+  const [canvasHeight, setCanvasHeight] = useState(800);
   const [sparkleMode, setSparkleMode] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // Initialize canvas
   useEffect(() => {
@@ -23,14 +24,19 @@ const DrawingCanvas: React.FC = () => {
     // Make canvas responsive
     const updateCanvasSize = () => {
       const containerWidth = Math.min(
-        window.innerWidth > 768 ? 600 : window.innerWidth - 40,
-        600
+        window.innerWidth > 1280 ? 1200 : window.innerWidth - 40,
+        1200
       );
+      const containerHeight = Math.min(
+        window.innerHeight > 900 ? 800 : window.innerHeight - 200,
+        800
+      );
+      
       setCanvasWidth(containerWidth);
-      setCanvasHeight(400);
+      setCanvasHeight(containerHeight);
       
       canvas.width = containerWidth;
-      canvas.height = 400;
+      canvas.height = containerHeight;
       
       // Reset the canvas context with new dimensions
       const context = canvas.getContext('2d');
@@ -135,7 +141,7 @@ const DrawingCanvas: React.FC = () => {
     if (!ctx || !canvasRef.current) return;
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    toast("Canvas cleared! Start a new drawing!", {
+    toast("تم مسح اللوحة! ابدأ رسمة جديدة!", {
       icon: "🎨"
     });
   };
@@ -143,11 +149,11 @@ const DrawingCanvas: React.FC = () => {
   const toggleSparkleMode = () => {
     setSparkleMode(!sparkleMode);
     if (!sparkleMode) {
-      toast("Magic wand activated! ✨ Draw sparkles!", {
+      toast("تم تفعيل العصا السحرية! ✨ ارسم النجوم!", {
         icon: "✨"
       });
     } else {
-      toast("Back to regular drawing mode", {
+      toast("عدنا لوضع الرسم العادي", {
         icon: "🖌️"
       });
     }
@@ -155,7 +161,6 @@ const DrawingCanvas: React.FC = () => {
 
   const downloadDrawing = () => {
     if (!canvasRef.current) return;
-    
     const canvas = canvasRef.current;
     const image = canvas.toDataURL('image/png');
     const link = document.createElement('a');
@@ -164,21 +169,48 @@ const DrawingCanvas: React.FC = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
-    toast("Your drawing has been saved! 🎉", {
+    toast("تم حفظ رسمتك! 🎉", {
       icon: "💾"
     });
   };
 
-  const analyzeDrawing = () => {
-    toast("Wow, I see a beautiful drawing! It looks fantastic!", {
-      icon: "🤖"
-    });
+  const handleAnalyzeDrawing = async () => {
+    if (!canvasRef.current) return;
+    
+    setIsAnalyzing(true);
+    try {
+      const canvas = canvasRef.current;
+      const imageData = canvas.toDataURL('image/png');
+      const analysis = await analyzeDrawing(imageData);
+      
+      toast(analysis || "واو، أرى رسمة جميلة! تبدو رائعة!", {
+        icon: "🤖",
+        duration: 10000,
+        className: "text-lg font-medium",
+        style: {
+          fontSize: '1.25rem',
+          lineHeight: '1.75rem',
+        }
+      });
+    } catch (error) {
+      console.error('Analysis error:', error);
+      toast.error("عذرًا، حدث خطأ أثناء تحليل الرسمة. يرجى المحاولة مرة أخرى.", {
+        icon: "❌",
+        duration: 5000,
+        className: "text-lg font-medium",
+        style: {
+          fontSize: '1.25rem',
+          lineHeight: '1.75rem',
+        }
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return (
-    <div className="flex flex-col items-center w-full max-w-2xl mx-auto bg-white/30 p-4 rounded-3xl backdrop-blur-sm shadow-lg">
-      <h2 className="text-2xl font-bold mb-3 text-purple-900">Drawing Canvas</h2>
+    <div className="flex flex-col items-center w-full max-w-7xl mx-auto bg-white/30 p-4 rounded-3xl backdrop-blur-sm shadow-lg">
+      <h2 className="text-2xl font-bold mb-3 text-purple-900">لوحة الرسم</h2>
       
       {/* Color picker */}
       <ColorPicker selectedColor={color} onSelectColor={setColor} />
@@ -186,14 +218,14 @@ const DrawingCanvas: React.FC = () => {
       {/* Brush size selector */}
       <div className="w-full flex justify-center gap-3 mb-4">
         <div className="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-xl">
-          <span className="text-sm font-medium">Brush Size:</span>
+          <span className="text-sm font-medium">حجم الفرشاة:</span>
           <div className="flex gap-2">
             {[8, 12, 20, 30].map((size) => (
               <button
                 key={size}
                 className={`w-${size / 4} h-${size / 4} rounded-full bg-black transition-all ${brushSize === size ? 'ring-2 ring-kidsYellow scale-110' : ''}`}
                 onClick={() => setBrushSize(size)}
-                title={`Brush size ${size}px`}
+                title={`حجم الفرشاة ${size}px`}
               />
             ))}
           </div>
@@ -201,12 +233,12 @@ const DrawingCanvas: React.FC = () => {
       </div>
       
       {/* Canvas */}
-      <div className="relative border-4 border-kidsLavender rounded-xl shadow-lg overflow-hidden">
+      <div className="relative border-4 border-kidsLavender rounded-xl shadow-lg overflow-hidden w-full">
         <canvas
           ref={canvasRef}
           width={canvasWidth}
           height={canvasHeight}
-          className="bg-white touch-none"
+          className="bg-white touch-none w-full h-full"
           onMouseDown={startDrawing}
           onMouseMove={draw}
           onMouseUp={endDrawing}
@@ -223,7 +255,7 @@ const DrawingCanvas: React.FC = () => {
           onClick={clearCanvas}
           className="bg-kidsLavender hover:bg-kidsLavender/80 text-black"
         >
-          Clear Canvas
+          مسح اللوحة
         </Button>
         
         <Button 
@@ -231,7 +263,7 @@ const DrawingCanvas: React.FC = () => {
           className={`${sparkleMode ? 'bg-kidsYellow' : 'bg-kidsBlue'} hover:bg-kidsYellow/80 text-black flex items-center gap-2`}
         >
           <Wand2 size={18} />
-          {sparkleMode ? 'Disable Magic' : 'Magic Wand'}
+          {sparkleMode ? 'إيقاف السحر' : 'العصا السحرية'}
         </Button>
         
         <Button 
@@ -239,15 +271,25 @@ const DrawingCanvas: React.FC = () => {
           className="bg-kidsGreen hover:bg-kidsGreen/80 text-black flex items-center gap-2"
         >
           <Download size={18} />
-          Save Drawing
+          حفظ الرسم
         </Button>
         
         <Button 
-          onClick={analyzeDrawing}
+          onClick={handleAnalyzeDrawing}
+          disabled={isAnalyzing}
           className="bg-kidsPink hover:bg-kidsPink/80 text-black flex items-center gap-2"
         >
-          <CheckCircle size={18} />
-          Tell Me About My Art
+          {isAnalyzing ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              جاري التحليل...
+            </>
+          ) : (
+            <>
+              <CheckCircle size={18} />
+              أخبرني عن رسمي
+            </>
+          )}
         </Button>
       </div>
     </div>
