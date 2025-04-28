@@ -33,7 +33,7 @@
    ```
 
 3. **إعداد متغيرات البيئة**
-   - أنشئ ملف `.env` في المجلد الرئيسي
+   - أنشئ ملف `.env` في المجلد الرئيسي المسمى Faheem-chieldren-friend
    - أضف مفتاح OpenAI API الخاص بك:
    ```
    VITE_OPENAI_API_KEY=your-api-key-here
