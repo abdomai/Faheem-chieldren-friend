@@ -25,7 +25,7 @@ const Mascot: React.FC<MascotProps> = ({ message = "مرحبًا! هيا نبد�
       <div className="relative">
         {/* Bear Image */}
         <img 
-          src="/bear.jpg" 
+          src="/bbbear.webp" 
           alt="Bear Mascot" 
           className="w-28 h-28 object-contain rounded-full shadow-lg bg-white" 
         />
