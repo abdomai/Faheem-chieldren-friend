@@ -85,7 +85,7 @@
 ## هيكل المشروع
 
 ```
-doodle-sparkle-chat-fun/
+Faheem-chieldren-friend/
 ├── src/
 │   ├── components/     # مكونات React
 │   ├── services/       # خدمات API
