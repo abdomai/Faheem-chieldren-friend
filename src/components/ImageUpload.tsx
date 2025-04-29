@@ -78,7 +78,9 @@ const ImageUpload: React.FC = () => {
       const analysis = await analyzeImage(image);
       toast(analysis || "أرى شيئًا رائعًا في صورتك!", {
         icon: "🤖",
-        duration: 10000, // Increased duration for longer analysis
+        duration: 10000,
+        className: "text-lg font-medium",
+        style: { fontSize: '1.25rem', lineHeight: '1.75rem' },
       });
     } catch (error) {
       console.error('Analysis error:', error);
