@@ -8,8 +8,7 @@ import { Pencil, Image, MessageCircle } from 'lucide-react';
 
 const Index: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("draw");
-  
-  // Update mascot message based on active tab
+
   const getMascotMessage = () => {
     switch (activeTab) {
       case "draw":
@@ -22,78 +21,74 @@ const Index: React.FC = () => {
         return "هيا نبدع معًا!";
     }
   };
-  
-  return (
-    <div className="container px-4 py-8 mx-auto">
-      <header className="flex flex-col md:flex-row items-center justify-between mb-10">
-        <div className="w-32 order-1 md:order-1">
-          <Mascot message={getMascotMessage()} />
+
+     return (
+        <div className="flex flex-col items-center justify-center w-full max-w-6xl p-4">
+          <div className="grid grid-cols-5 md:grid-cols-5 gap-3 w-full">
+            {/* Mascot and Logo Section */}
+            <div className="md:col-span-2 flex flex-col items-center justify-start">
+              <img
+                src="/images/faheem.png"
+                alt="فهيم"
+                className="w-32 mb-3 wiggle"
+              />
+              <Mascot message={getMascotMessage()} />
+            </div>
+
+            {/* Tabs and Content Section */}
+            <div className="md:col-span-3 flex flex-col">
+              <Tabs
+                defaultValue="draw"
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full"
+              >
+                <TabsList className="grid grid-cols-3 gap-2 bg-transparent mb-3">
+                  <TabsTrigger
+                    value="draw"
+                    className="flex flex-col items-center gap-1 py-3 px-2 rounded-xl bg-kidsPink/40 hover:bg-kidsPink data-[state=active]:bg-kidsPink data-[state=active]:text-black shadow-lg transition-all transform hover:scale-105"
+                  >
+                    <Pencil size={18} />
+                    <span className="text-xs">ارسم</span>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="upload"
+                    className="flex flex-col items-center gap-1 py-3 px-2 rounded-xl bg-kidsBlue/40 hover:bg-kidsBlue data-[state=active]:bg-kidsBlue data-[state=active]:text-black shadow-lg transition-all transform hover:scale-105"
+                  >
+                    <Image size={18} />
+                    <span className="text-xs">صور</span>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="chat"
+                    className="flex flex-col items-center gap-1 py-3 px-2 rounded-xl bg-kidsGreen/40 hover:bg-kidsGreen data-[state=active]:bg-kidsGreen data-[state=active]:text-black shadow-lg transition-all transform hover:scale-105"
+                  >
+                    <MessageCircle size={18} />
+                    <span className="text-xs">دردشة</span>
+                  </TabsTrigger>
+                </TabsList>
+
+                <div className="tab-content p-3">
+                  <TabsContent value="draw" className="focus-visible:outline-none">
+                    <DrawingCanvas />
+                  </TabsContent>
+                  <TabsContent value="upload" className="focus-visible:outline-none">
+                    <ImageUpload />
+                  </TabsContent>
+                  <TabsContent value="chat" className="focus-visible:outline-none">
+                    <ChatBot />
+                  </TabsContent>
+                </div>
+              </Tabs>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <footer className="mt-3 text-center text-gray-800 text-lg">
+            <p>صُنع بحب للأطفال في كل مكان!</p>
+            <p>كل الرسومات والإبداعات رائعة!</p>
+          </footer>
         </div>
-        
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 md:mb-0 text-center md:text-right order-2 md:order-2 bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 text-transparent bg-clip-text">
-          فهيـــــم
-        </h1>
-      </header>
-      
-      <Tabs
-        defaultValue="draw"
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="w-full mb-12"
-      >
-        <TabsList className="grid w-full grid-cols-3 h-auto gap-4 bg-transparent">
-          <TabsTrigger
-            value="draw"
-            className="data-[state=active]:bg-kidsPink data-[state=active]:text-black py-6 shadow-lg rounded-xl"
-          >
-            <div className="flex flex-col items-center gap-1">
-              <Pencil size={24} />
-              <span>ارسم</span>
-            </div>
-          </TabsTrigger>
-          
-          <TabsTrigger
-            value="upload"
-            className="data-[state=active]:bg-kidsBlue data-[state=active]:text-black py-6 shadow-lg rounded-xl"
-          >
-            <div className="flex flex-col items-center gap-1">
-              <Image size={24} />
-              <span>صور</span>
-            </div>
-          </TabsTrigger>
-          
-          <TabsTrigger
-            value="chat"
-            className="data-[state=active]:bg-kidsGreen data-[state=active]:text-black py-6 shadow-lg rounded-xl"
-          >
-            <div className="flex flex-col items-center gap-1">
-              <MessageCircle size={24} />
-              <span>دردشة</span>
-            </div>
-          </TabsTrigger>
-        </TabsList>
-        
-        <div className="mt-8">
-          <TabsContent value="draw" className="focus-visible:outline-none focus-visible:ring-0">
-            <DrawingCanvas />
-          </TabsContent>
-          
-          <TabsContent value="upload" className="focus-visible:outline-none focus-visible:ring-0">
-            <ImageUpload />
-          </TabsContent>
-          
-          <TabsContent value="chat" className="focus-visible:outline-none focus-visible:ring-0">
-            <ChatBot />
-          </TabsContent>
-        </div>
-      </Tabs>
-      
-      <footer className="text-center mt-8 text-gray-700 text-sm">
-        <p>صُنع بحب للأطفال في كل مكان!</p>
-        <p className="mt-1">كل الرسومات والإبداعات رائعة!</p>
-      </footer>
-    </div>
-  );
+      );
 };
 
 export default Index;
