@@ -9,10 +9,8 @@ const DrawingCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [color, setColor] = useState('#FF6B6B'); // Start with red
+  const [color, setColor] = useState('#FF6B6B');
   const [brushSize, setBrushSize] = useState(12);
-  const [canvasWidth, setCanvasWidth] = useState(1200);
-  const [canvasHeight, setCanvasHeight] = useState(800);
   const [sparkleMode, setSparkleMode] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
@@ -20,46 +18,36 @@ const DrawingCanvas: React.FC = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
-    // Make canvas responsive
+
     const updateCanvasSize = () => {
-      const containerWidth = Math.min(
-        window.innerWidth > 1280 ? 1200 : window.innerWidth - 40,
-        1200
-      );
-      const containerHeight = Math.min(
-        window.innerHeight > 900 ? 800 : window.innerHeight - 200,
-        800
-      );
-      
-      setCanvasWidth(containerWidth);
-      setCanvasHeight(containerHeight);
-      
-      canvas.width = containerWidth;
-      canvas.height = containerHeight;
-      
-      // Reset the canvas context with new dimensions
+      const rect = canvas.getBoundingClientRect();
+      // Set canvas resolution to match display size, adjusted for device pixel ratio
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+
       const context = canvas.getContext('2d');
       if (context) {
+        // Scale context to account for device pixel ratio
+        context.scale(window.devicePixelRatio, window.devicePixelRatio);
         context.lineJoin = 'round';
         context.lineCap = 'round';
         context.lineWidth = brushSize;
         context.strokeStyle = color;
         setCtx(context);
-        
+
         // Fill with white background
         context.fillStyle = 'white';
-        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.fillRect(0, 0, rect.width, rect.height);
       }
     };
 
-    window.addEventListener('resize', updateCanvasSize);
     updateCanvasSize();
+    window.addEventListener('resize', updateCanvasSize);
 
     return () => window.removeEventListener('resize', updateCanvasSize);
   }, []);
 
-  // Update brush size and color when they change
+  // Update brush size and color
   useEffect(() => {
     if (ctx) {
       ctx.lineWidth = brushSize;
@@ -67,14 +55,35 @@ const DrawingCanvas: React.FC = () => {
     }
   }, [color, brushSize, ctx]);
 
+  const getCoordinates = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    if (!canvasRef.current) return { x: 0, y: 0 };
+
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width / window.devicePixelRatio;
+    const scaleY = canvas.height / rect.height / window.devicePixelRatio;
+
+    if ('touches' in e) {
+      return {
+        x: (e.touches[0].clientX - rect.left) * scaleX,
+        y: (e.touches[0].clientY - rect.top) * scaleY,
+      };
+    } else {
+      return {
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY,
+      };
+    }
+  };
+
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (!ctx) return;
-    
+
     setIsDrawing(true);
     const coordinates = getCoordinates(e);
     ctx.beginPath();
     ctx.moveTo(coordinates.x, coordinates.y);
-    
+
     if (sparkleMode) {
       drawSparkle(coordinates.x, coordinates.y);
     }
@@ -82,9 +91,9 @@ const DrawingCanvas: React.FC = () => {
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (!isDrawing || !ctx) return;
-    
+
     const coordinates = getCoordinates(e);
-    
+
     if (sparkleMode) {
       drawSparkle(coordinates.x, coordinates.y);
     } else {
@@ -99,37 +108,18 @@ const DrawingCanvas: React.FC = () => {
     setIsDrawing(false);
   };
 
-  const getCoordinates = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    if (!canvasRef.current) return { x: 0, y: 0 };
-    
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    
-    if ('touches' in e) {
-      return {
-        x: e.touches[0].clientX - rect.left,
-        y: e.touches[0].clientY - rect.top
-      };
-    } else {
-      return {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      };
-    }
-  };
-
   const drawSparkle = (x: number, y: number) => {
     if (!ctx) return;
-    
+
     const sparkleSize = brushSize / 2;
     const colors = ['#FFD700', '#FF6B6B', '#C3B1E1', '#77DD77', '#A7C7E7'];
-    
+
     for (let i = 0; i < 5; i++) {
       const angle = Math.random() * Math.PI * 2;
       const distance = Math.random() * sparkleSize;
       const sparkleX = x + Math.cos(angle) * distance;
       const sparkleY = y + Math.sin(angle) * distance;
-      
+
       ctx.beginPath();
       ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
       ctx.arc(sparkleX, sparkleY, Math.random() * 3 + 1, 0, Math.PI * 2);
@@ -139,23 +129,18 @@ const DrawingCanvas: React.FC = () => {
 
   const clearCanvas = () => {
     if (!ctx || !canvasRef.current) return;
+    const canvas = canvasRef.current;
     ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    toast("تم مسح اللوحة! ابدأ رسمة جديدة!", {
-      icon: "🎨"
-    });
+    ctx.fillRect(0, 0, canvas.width / window.devicePixelRatio, canvas.height / window.devicePixelRatio);
+    toast("تم مسح اللوحة! ابدأ رسمة جديدة!", { icon: "🎨" });
   };
 
   const toggleSparkleMode = () => {
     setSparkleMode(!sparkleMode);
     if (!sparkleMode) {
-      toast("تم تفعيل العصا السحرية! ✨ ارسم النجوم!", {
-        icon: "✨"
-      });
+      toast("تم تفعيل العصا السحرية! ✨ ارسم النجوم!", { icon: "✨" });
     } else {
-      toast("عدنا لوضع الرسم العادي", {
-        icon: "🖌️"
-      });
+      toast("عدنا لوضع الرسم العادي", { icon: "🖌️" });
     }
   };
 
@@ -169,28 +154,23 @@ const DrawingCanvas: React.FC = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    toast("تم حفظ رسمتك! 🎉", {
-      icon: "💾"
-    });
+    toast("تم حفظ رسمتك! 🎉", { icon: "💾" });
   };
 
   const handleAnalyzeDrawing = async () => {
     if (!canvasRef.current) return;
-    
+
     setIsAnalyzing(true);
     try {
       const canvas = canvasRef.current;
       const imageData = canvas.toDataURL('image/png');
       const analysis = await analyzeDrawing(imageData);
-      
+
       toast(analysis || "واو، أرى رسمة جميلة! تبدو رائعة!", {
         icon: "🤖",
         duration: 10000,
         className: "text-lg font-medium",
-        style: {
-          fontSize: '1.25rem',
-          lineHeight: '1.75rem',
-        }
+        style: { fontSize: '1.25rem', lineHeight: '1.75rem' },
       });
     } catch (error) {
       console.error('Analysis error:', error);
@@ -198,10 +178,7 @@ const DrawingCanvas: React.FC = () => {
         icon: "❌",
         duration: 5000,
         className: "text-lg font-medium",
-        style: {
-          fontSize: '1.25rem',
-          lineHeight: '1.75rem',
-        }
+        style: { fontSize: '1.25rem', lineHeight: '1.75rem' },
       });
     } finally {
       setIsAnalyzing(false);
@@ -209,13 +186,9 @@ const DrawingCanvas: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full max-w-7xl mx-auto bg-white/30 p-4 rounded-3xl backdrop-blur-sm shadow-lg">
+    <div className="flex flex-col items-center w-full p-4 rounded-3xl bg-white/30 backdrop-blur-sm shadow-lg">
       <h2 className="text-2xl font-bold mb-3 text-purple-900">لوحة الرسم</h2>
-      
-      {/* Color picker */}
       <ColorPicker selectedColor={color} onSelectColor={setColor} />
-      
-      {/* Brush size selector */}
       <div className="w-full flex justify-center gap-3 mb-4">
         <div className="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-xl">
           <span className="text-sm font-medium">حجم الفرشاة:</span>
@@ -231,13 +204,9 @@ const DrawingCanvas: React.FC = () => {
           </div>
         </div>
       </div>
-      
-      {/* Canvas */}
-      <div className="relative border-4 border-kidsLavender rounded-xl shadow-lg overflow-hidden w-full">
+      <div className="relative border-4 border-kidsLavender rounded-xl shadow-lg overflow-hidden w-full h-[40vh]">
         <canvas
           ref={canvasRef}
-          width={canvasWidth}
-          height={canvasHeight}
           className="bg-white touch-none w-full h-full"
           onMouseDown={startDrawing}
           onMouseMove={draw}
@@ -248,33 +217,25 @@ const DrawingCanvas: React.FC = () => {
           onTouchEnd={endDrawing}
         />
       </div>
-      
-      {/* Action buttons */}
       <div className="flex flex-wrap justify-center gap-3 mt-4">
-        <Button 
-          onClick={clearCanvas}
-          className="bg-kidsLavender hover:bg-kidsLavender/80 text-black"
-        >
+        <Button onClick={clearCanvas} className="bg-kidsLavender hover:bg-kidsLavender/80 text-black">
           مسح اللوحة
         </Button>
-        
-        <Button 
+        <Button
           onClick={toggleSparkleMode}
           className={`${sparkleMode ? 'bg-kidsYellow' : 'bg-kidsBlue'} hover:bg-kidsYellow/80 text-black flex items-center gap-2`}
         >
           <Wand2 size={18} />
           {sparkleMode ? 'إيقاف السحر' : 'العصا السحرية'}
         </Button>
-        
-        <Button 
+        <Button
           onClick={downloadDrawing}
           className="bg-kidsGreen hover:bg-kidsGreen/80 text-black flex items-center gap-2"
         >
           <Download size={18} />
           حفظ الرسم
         </Button>
-        
-        <Button 
+        <Button
           onClick={handleAnalyzeDrawing}
           disabled={isAnalyzing}
           className="bg-kidsPink hover:bg-kidsPink/80 text-black flex items-center gap-2"

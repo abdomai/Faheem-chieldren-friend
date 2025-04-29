@@ -24,11 +24,12 @@ const Mascot: React.FC<MascotProps> = ({ message = "مرحبًا! هيا نبد�
     <div className="flex flex-col items-center">
       <div className="relative">
         {/* Bear Image */}
-        <img 
-          src="/bbbear.webp" 
-          alt="Bear Mascot" 
-          className="w-28 h-28 object-contain rounded-full shadow-lg bg-white" 
-        />
+        <img
+        src="/images/ballonnobackground.png"
+        alt="Balloon Bear Mascot"
+        className="w-full h-full object-contain"
+      />
+     
       </div>
       
       {/* Speech bubble */}
